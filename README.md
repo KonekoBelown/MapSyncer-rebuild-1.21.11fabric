@@ -12,18 +12,18 @@ The migration runs on a client background thread and then uses the existing batc
 
 ## 版本
 
-- Minecraft / Fabric：`26.1.2`
+- Minecraft / Fabric：`1.21.11`
 - Fabric Loader：`0.19.2`
-- Fabric API：`0.149.1+26.1.2`
-- Java：`25`
-- Mod：`1.0.1-fabric`
+- Fabric API：`0.141.4+1.21.11`
+- Java：`21`
+- Mod：`1.0.1-fabric-1.21.11`
 
 ## 来源
 
 本项目基于 [RuoChennn/MapSyncer-for-XaeroWorldmap](https://github.com/RuoChennn/MapSyncer-for-XaeroWorldmap) 改写。
 
 - 原作者：RuoChennn
-- 当前 `26.1.2` 适配版本：ShanHe_YF
+- 当前 `1.21.11` 适配版本：ShanHe_YF / ChatGPT 迁移调整
 
 ## 安装
 

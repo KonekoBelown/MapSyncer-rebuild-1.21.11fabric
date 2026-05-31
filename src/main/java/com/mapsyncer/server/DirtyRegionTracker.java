@@ -23,7 +23,7 @@ public final class DirtyRegionTracker {
             return;
         }
 
-        ChunkPos chunkPos = ChunkPos.containing(pos);
+        ChunkPos chunkPos = new ChunkPos(pos);
         ResourceKey<Level> dimension = level.dimension();
         int regionX = chunkPos.getRegionX();
         int regionZ = chunkPos.getRegionZ();

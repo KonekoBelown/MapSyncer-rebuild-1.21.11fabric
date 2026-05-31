@@ -45,7 +45,7 @@ public final class PublicWaypointReceiver {
         }
         if (!ClientPlayNetworking.canSend(PacketHandler.PublicWaypointsRequestPayload.TYPE)) {
             PublicWaypointClientState.set(PublicWaypointClientState.Status.FAILED, 0);
-            mc.player.sendSystemMessage(ChatUtils.error("mapsyncer.waypoints.unsupported"));
+            mc.player.displayClientMessage(ChatUtils.error("mapsyncer.waypoints.unsupported"), false);
             return;
         }
         PublicWaypointClientState.set(PublicWaypointClientState.Status.SYNCING, 0);
@@ -222,7 +222,7 @@ public final class PublicWaypointReceiver {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
             if (mc.player != null) {
-                mc.player.sendSystemMessage(ChatUtils.message(key));
+                mc.player.displayClientMessage(ChatUtils.message(key), false);
             }
         });
     }

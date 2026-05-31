@@ -59,12 +59,12 @@ public final class DefaultMapMigration {
 
             Minecraft.getInstance().execute(() -> {
                 if (Minecraft.getInstance().player != null) {
-                    Minecraft.getInstance().player.sendSystemMessage(ChatUtils.success(
+                    Minecraft.getInstance().player.displayClientMessage(ChatUtils.success(
                             "mapsyncer.migration.complete",
-                            result.copied(), result.skipped(), result.failed()));
+                            result.copied(), result.skipped(), result.failed()), false);
                     if (!result.migratedRegions().isEmpty()) {
-                        Minecraft.getInstance().player.sendSystemMessage(ChatUtils.message(
-                                "mapsyncer.migration.reload", result.migratedRegions().size()));
+                        Minecraft.getInstance().player.displayClientMessage(ChatUtils.message(
+                                "mapsyncer.migration.reload", result.migratedRegions().size()), false);
                     }
                 }
                 if (!result.migratedRegions().isEmpty()) {
@@ -193,7 +193,7 @@ public final class DefaultMapMigration {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
             if (mc.player != null) {
-                mc.player.sendSystemMessage(ChatUtils.message(key, args));
+                mc.player.displayClientMessage(ChatUtils.message(key, args), false);
             }
         });
     }
@@ -202,7 +202,7 @@ public final class DefaultMapMigration {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
             if (mc.player != null) {
-                mc.player.sendSystemMessage(ChatUtils.error(key, args));
+                mc.player.displayClientMessage(ChatUtils.error(key, args), false);
             }
         });
     }

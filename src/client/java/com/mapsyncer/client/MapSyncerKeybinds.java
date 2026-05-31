@@ -2,7 +2,7 @@ package com.mapsyncer.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 
 final class MapSyncerKeybinds {
@@ -12,7 +12,7 @@ final class MapSyncerKeybinds {
     }
 
     static void register() {
-        openGui = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        openGui = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.mapsyncer.open_gui",
                 InputConstants.Type.KEYSYM,
                 InputConstants.UNKNOWN.getValue(),

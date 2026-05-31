@@ -42,25 +42,25 @@ public final class VoxySyncHandler {
     }
 
     public static void register() {
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.VoxyCapabilityRequestPayload.TYPE,
                 PacketHandler.VoxyCapabilityRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.VoxyCapabilityPayload.TYPE,
                 PacketHandler.VoxyCapabilityPayload.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.VoxySyncRequestPayload.TYPE,
                 PacketHandler.VoxySyncRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.VoxySyncStartPayload.TYPE,
                 PacketHandler.VoxySyncStartPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.VoxyRegionPartPayload.TYPE,
                 PacketHandler.VoxyRegionPartPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.VoxySyncProgressPayload.TYPE,
                 PacketHandler.VoxySyncProgressPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.VoxySyncCompletePayload.TYPE,
                 PacketHandler.VoxySyncCompletePayload.STREAM_CODEC);
 

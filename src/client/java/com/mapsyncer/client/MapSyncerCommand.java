@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.*;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -69,6 +69,20 @@ public class MapSyncerCommand {
                         .executes(MapSyncerCommand::showHelp)
                         .then(literal("help")
                                 .executes(MapSyncerCommand::showHelp))
+                        // 客户端也注册 generate/status/incremental 入口，避免客户端 /mapsyncer 命令树
+                        // 把同名服务端命令遮住后出现“命令不完整”。实际执行仍转发给服务端。
+                        .then(literal("generate")
+                                .executes(context -> forwardServerCommand(context, "mapsyncer generate"))
+                                .then(argument("args", StringArgumentType.greedyString())
+                                        .suggests(MapSyncerCommand::suggestGenerateArguments)
+                                        .executes(context -> forwardServerCommand(context,
+                                                "mapsyncer generate " + StringArgumentType.getString(context, "args")))))
+                        .then(literal("status")
+                                .executes(context -> forwardServerCommand(context, "mapsyncer status")))
+                        .then(literal("incremental")
+                                .then(argument("args", StringArgumentType.greedyString())
+                                        .executes(context -> forwardServerCommand(context,
+                                                "mapsyncer incremental " + StringArgumentType.getString(context, "args")))))
                         .then(literal("sync")
                                 .executes(MapSyncerCommand::executeSyncCurrentDim)
                                 .then(literal("radius")
@@ -97,6 +111,27 @@ public class MapSyncerCommand {
         return Command.SINGLE_SUCCESS;
     }
 
+    private static int forwardServerCommand(CommandContext<FabricClientCommandSource> context, String command) {
+        Minecraft mc = context.getSource().getClient();
+        if (mc.player == null) {
+            return 0;
+        }
+        // sendCommand 需要不带前导斜杠，例如 "mapsyncer generate minecraft:overworld"。
+        mc.player.connection.sendCommand(command);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static CompletableFuture<Suggestions> suggestGenerateArguments(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining();
+        if (remaining == null || remaining.isBlank() || !remaining.trim().contains(" ")) {
+            suggestDimensions(context, builder);
+            builder.suggest("minecraft:overworld");
+            builder.suggest("minecraft:the_nether");
+            builder.suggest("minecraft:the_end");
+        }
+        return builder.buildFuture();
+    }
+
     /**
      * 显示命令帮助信息。
      *
@@ -108,25 +143,25 @@ public class MapSyncerCommand {
         if (mc.player == null) return 0;
 
         // 客户端同步命令
-        mc.player.sendSystemMessage(ChatUtils.prefix().append(ChatUtils.header("mapsyncer.command.help_header")));
-        mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.command.help_sync"));
-        mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.command.help_sync_radius"));
-        mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.command.help_sync_dim"));
-        mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.command.help_sync_all"));
-        mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.command.help_gui"));
-        mc.player.sendSystemMessage(ChatUtils.header("mapsyncer.command.help_dimension_note"));
+        mc.player.displayClientMessage(ChatUtils.prefix().append(ChatUtils.header("mapsyncer.command.help_header")), false);
+        mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.command.help_sync"), false);
+        mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.command.help_sync_radius"), false);
+        mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.command.help_sync_dim"), false);
+        mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.command.help_sync_all"), false);
+        mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.command.help_gui"), false);
+        mc.player.displayClientMessage(ChatUtils.header("mapsyncer.command.help_dimension_note"), false);
 
         // 如果玩家有OP权限，显示服务端命令
         if (net.minecraft.commands.Commands.LEVEL_OWNERS.check(context.getSource().getPlayer().permissions())) {
-            mc.player.sendSystemMessage(ChatUtils.prefix().append(ChatUtils.header("mapsyncer.help.server.header")));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.generate"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.generate_dim"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.generate_region"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.generate_force"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.status"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.incremental_off"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.incremental_tick"));
-            mc.player.sendSystemMessage(ChatUtils.desc("mapsyncer.help.server.incremental_scheduled"));
+            mc.player.displayClientMessage(ChatUtils.prefix().append(ChatUtils.header("mapsyncer.help.server.header")), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.generate"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.generate_dim"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.generate_region"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.generate_force"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.status"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.incremental_off"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.incremental_tick"), false);
+            mc.player.displayClientMessage(ChatUtils.desc("mapsyncer.help.server.incremental_scheduled"), false);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -380,7 +415,7 @@ public class MapSyncerCommand {
             return;
         }
         if (!ClientPlayNetworking.canSend(PacketHandler.RadiusSyncRequestPayload.TYPE)) {
-            mc.player.sendSystemMessage(ChatUtils.error("mapsyncer.sync.radius_unsupported"));
+            mc.player.displayClientMessage(ChatUtils.error("mapsyncer.sync.radius_unsupported"), false);
             return;
         }
 

@@ -64,7 +64,7 @@ public class ClientJoinHandler {
                                             .withHoverEvent(new HoverEvent.ShowText(
                                                     Component.translatable("mapsyncer.sync.resume_hover"))));
 
-                            mc.player.sendSystemMessage(message.append(resumeButton));
+                            mc.player.displayClientMessage(message.append(resumeButton), false);
                         }
                     });
                 }
@@ -93,7 +93,7 @@ public class ClientJoinHandler {
         ClientTimestampCache tsCache = ClientTimestampCache.getInstance(serverDir);
         tsCache.clearSyncState();
         if (mc.player != null) {
-            mc.player.sendSystemMessage(ChatUtils.success("mapsyncer.sync.state_cleared"));
+            mc.player.displayClientMessage(ChatUtils.success("mapsyncer.sync.state_cleared"), false);
         }
     }
 }

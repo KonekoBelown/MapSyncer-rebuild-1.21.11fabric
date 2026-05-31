@@ -3,6 +3,7 @@ package com.mapsyncer.server;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mapsyncer.config.ModConfig;
@@ -47,7 +48,11 @@ public class CacheGenerateCommand {
      * @param dispatcher Brigadier命令分发器
      */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("mapsyncer")
+        dispatcher.register(createRootCommand("mapsyncer"));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> createRootCommand(String name) {
+        return Commands.literal(name)
                 .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                 .executes(CacheGenerateCommand::showHelp)
                 .then(Commands.literal("help")
@@ -79,7 +84,7 @@ public class CacheGenerateCommand {
                                 .then(Commands.argument("hour", IntegerArgumentType.integer(0, 23))
                                         .executes(CacheGenerateCommand::setScheduledTimeDefaultMinute)
                                         .then(Commands.argument("minute", IntegerArgumentType.integer(0, 59))
-                                                .executes(CacheGenerateCommand::setScheduledTime))))));
+                                                .executes(CacheGenerateCommand::setScheduledTime)))));
     }
 
     private static int showHelp(CommandContext<CommandSourceStack> ctx) {

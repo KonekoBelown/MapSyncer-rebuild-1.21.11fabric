@@ -4,7 +4,7 @@ import com.mapsyncer.MapSyncer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -19,7 +19,7 @@ public final class SyncHudOverlay {
         HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT, ID, SyncHudOverlay::render);
     }
 
-    private static void render(GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker deltaTracker) {
+    private static void render(GuiGraphics graphics, net.minecraft.client.DeltaTracker deltaTracker) {
         if (!ClientConfig.VALUES.showSyncHud) {
             return;
         }
@@ -48,7 +48,7 @@ public final class SyncHudOverlay {
         int filled = Math.max(0, Math.min(barWidth, (barWidth * percent) / 100));
 
         graphics.fill(x, y, x + width, y + height, withAlpha(0xCC101418, alpha));
-        graphics.outline(x, y, width, height, withAlpha(0xFF5BC0EB, alpha));
+        graphics.renderOutline(x, y, width, height, withAlpha(0xFF5BC0EB, alpha));
         graphics.fill(barX, barY, barX + barWidth, barY + 5, withAlpha(0xFF2E3740, alpha));
         graphics.fill(barX, barY, barX + filled, barY + 5, withAlpha(0xFF5BC0EB, alpha));
 
@@ -57,7 +57,7 @@ public final class SyncHudOverlay {
             title = Component.translatable("mapsyncer.hud.completed").getString();
         }
         String label = title + " " + percent + "%";
-        graphics.text(mc.font, label, x + 8, y + 5, withAlpha(0xFFFFFFFF, alpha), false);
+        graphics.drawString(mc.font, label, x + 8, y + 5, withAlpha(0xFFFFFFFF, alpha), false);
     }
 
     private static int withAlpha(int argb, float alpha) {

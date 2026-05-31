@@ -3,7 +3,7 @@ package com.mapsyncer.client;
 import com.mapsyncer.client.voxy.VoxySyncClient;
 import com.mapsyncer.network.PacketHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -70,14 +70,14 @@ public class MapSyncerScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         drawShell(graphics);
         switch (activeTab) {
             case SYNC -> drawSyncTab(graphics);
             case ADMIN -> drawAdminTab(graphics);
             case SETTINGS -> drawSettingsTab(graphics);
         }
-        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -333,35 +333,35 @@ public class MapSyncerScreen extends Screen {
         updateSettingsButtonMessages();
     }
 
-    private void drawShell(GuiGraphicsExtractor graphics) {
+    private void drawShell(GuiGraphics graphics) {
         int left = panelLeft();
         int top = panelTop();
         graphics.fill(left, top, left + panelWidth(), top + panelHeight(), 0xD8181C22);
-        graphics.outline(left, top, panelWidth(), panelHeight(), 0xFF5BC0EB);
-        graphics.centeredText(font, title, width / 2, top + 10, 0xFFFFFFFF);
+        graphics.renderOutline(left, top, panelWidth(), panelHeight(), 0xFF5BC0EB);
+        graphics.drawCenteredString(font, title, width / 2, top + 10, 0xFFFFFFFF);
         graphics.fill(left + 12, top + 58, left + panelWidth() - 12, top + 59, 0x665BC0EB);
     }
 
-    private void drawSyncTab(GuiGraphicsExtractor graphics) {
+    private void drawSyncTab(GuiGraphics graphics) {
         int x = contentLeft();
         int y = syncTextY();
         boolean installed = MapPacketReceiver.isServerInstalled();
         Component serverStatus = installed
                 ? Component.translatable("mapsyncer.gui.sync.server_installed", MapPacketReceiver.getServerVersion())
                 : Component.translatable("mapsyncer.gui.sync.server_missing");
-        graphics.text(font, Component.translatable("mapsyncer.gui.sync.dimension", currentDimensionId()), x, y, 0xFFE8F0F6, false);
-        graphics.text(font, serverStatus, x, y + 16, installed ? 0xFF8CE99A : 0xFFFFC857, false);
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.sync.dimension", currentDimensionId()), x, y, 0xFFE8F0F6, false);
+        graphics.drawString(font, serverStatus, x, y + 16, installed ? 0xFF8CE99A : 0xFFFFC857, false);
 
         int barY = syncBarY();
         int barWidth = contentWidth();
         int percent = visibleSyncPercent();
-        graphics.text(font, Component.translatable("mapsyncer.gui.sync.progress",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.sync.progress",
                 SyncProgressTracker.getProcessed(), SyncProgressTracker.getTotal(), percent), x, barY - 12, 0xFFE8F0F6, false);
         graphics.fill(x, barY, x + barWidth, barY + 8, 0xFF2E3740);
         graphics.fill(x, barY, x + (barWidth * percent) / 100, barY + 8, 0xFF5BC0EB);
-        graphics.outline(x, barY, barWidth, 8, 0xFF6B7785);
+        graphics.renderOutline(x, barY, barWidth, 8, 0xFF6B7785);
         if (!SyncProgressTracker.getStatus().isBlank()) {
-            graphics.text(font, Component.literal(SyncProgressTracker.getStatus()), x, barY + 14, 0xFFB9C3CC, false);
+            graphics.drawString(font, Component.literal(SyncProgressTracker.getStatus()), x, barY + 14, 0xFFB9C3CC, false);
         }
 
         int voxyY = syncVoxyY();
@@ -384,12 +384,12 @@ public class MapSyncerScreen extends Screen {
         drawSingleLine(graphics, voxyStatus, x, voxyY, contentWidth(), voxyReason.isBlank() ? 0xFF8CE99A : 0xFFB9C3CC);
 
         int voxyPercent = visibleVoxyPercent();
-        graphics.text(font, Component.translatable("mapsyncer.gui.voxy.progress",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.voxy.progress",
                 VoxySyncClient.getProcessedRegions(), VoxySyncClient.getTotalRegions(), voxyPercent),
                 x, voxyY + 14, 0xFFE8F0F6, false);
         graphics.fill(x, voxyY + 28, x + barWidth, voxyY + 36, 0xFF2E3740);
         graphics.fill(x, voxyY + 28, x + (barWidth * voxyPercent) / 100, voxyY + 36, 0xFFB089FF);
-        graphics.outline(x, voxyY + 28, barWidth, 8, 0xFF6B7785);
+        graphics.renderOutline(x, voxyY + 28, barWidth, 8, 0xFF6B7785);
 
         String voxyText = VoxySyncClient.getDisplayStatus();
         if (!voxyText.isBlank() && voxyY + 52 <= panelTop() + panelHeight() - 4) {
@@ -398,60 +398,60 @@ public class MapSyncerScreen extends Screen {
 
         int noteY = voxyY + 58;
         if (panelHeight() >= 270 && noteY + 18 <= panelTop() + panelHeight() - 8) {
-            graphics.textWithWordWrap(font, Component.translatable("mapsyncer.gui.voxy.note"),
+            graphics.drawWordWrap(font, Component.translatable("mapsyncer.gui.voxy.note"),
                     x, noteY, contentWidth(), 0xFF9BA8B5);
         }
     }
 
-    private void drawAdminTab(GuiGraphicsExtractor graphics) {
+    private void drawAdminTab(GuiGraphics graphics) {
         int x = contentLeft();
         int y = panelTop() + 72;
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.dimension_label"), x, y + 10, 0xFFE8F0F6, false);
-        graphics.textWithWordWrap(font, Component.translatable("mapsyncer.gui.admin.warning"), x, y + 90, contentWidth(), 0xFFFFC857);
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.dimension_label"), x, y + 10, 0xFFE8F0F6, false);
+        graphics.drawWordWrap(font, Component.translatable("mapsyncer.gui.admin.warning"), x, y + 90, contentWidth(), 0xFFFFC857);
 
         int statusY = y + (contentWidth() >= 470 ? 124 : 134);
         String error = AdminStatusClientState.getLastError();
         PacketHandler.AdminStatusPayload status = AdminStatusClientState.getLastStatus();
         if (!error.isBlank()) {
-            graphics.text(font, Component.translatable("mapsyncer.gui.admin.status_" + error), x, statusY, 0xFFFF6B6B, false);
+            graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.status_" + error), x, statusY, 0xFFFF6B6B, false);
             return;
         }
         if (status == null) {
-            graphics.text(font, Component.translatable("mapsyncer.gui.admin.status_waiting"), x, statusY, 0xFFB9C3CC, false);
+            graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.status_waiting"), x, statusY, 0xFFB9C3CC, false);
             return;
         }
         if (!status.allowed()) {
-            graphics.text(font, Component.translatable("mapsyncer.gui.admin.no_permission"), x, statusY, 0xFFFF6B6B, false);
+            graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.no_permission"), x, statusY, 0xFFFF6B6B, false);
             return;
         }
 
         int percent = status.total() > 0 ? Math.min(100, status.processed() * 100 / status.total()) : 0;
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.status_line",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.status_line",
                 status.running() ? Component.translatable("mapsyncer.gui.admin.running") : Component.translatable("mapsyncer.gui.admin.idle"),
                 status.processed(), status.total(), percent, status.status()), x, statusY, 0xFFE8F0F6, false);
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.dirty", status.dirtyCount()), x, statusY + 16, 0xFFB9C3CC, false);
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.cache",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.dirty", status.dirtyCount()), x, statusY + 16, 0xFFB9C3CC, false);
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.cache",
                 status.cacheDimensionCount(), status.cacheRegionCount(), status.cacheSizeBytes() / (1024.0 * 1024.0)), x, statusY + 32, 0xFFB9C3CC, false);
         String speedLimit = status.syncSpeedLimitKBps() <= 0
                 ? Component.translatable("mapsyncer.gui.admin.unlimited").getString()
                 : status.syncSpeedLimitKBps() + " KB/s";
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.limit", speedLimit), x, statusY + 48, 0xFFB9C3CC, false);
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.incremental_status", status.incrementalStatus()), x, statusY + 64, 0xFFB9C3CC, false);
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.radius_status",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.limit", speedLimit), x, statusY + 48, 0xFFB9C3CC, false);
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.incremental_status", status.incrementalStatus()), x, statusY + 64, 0xFFB9C3CC, false);
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.radius_status",
                 status.radiusSyncEnabled() ? Component.translatable("mapsyncer.gui.settings.on").getString()
                         : Component.translatable("mapsyncer.gui.settings.off").getString(),
                 status.maxRadiusSyncBlocks(), status.radiusSyncCenterMode()), x, statusY + 80, 0xFFB9C3CC, false);
         String waypointHash = status.publicWaypointsHash().isBlank()
                 ? "-"
                 : status.publicWaypointsHash().substring(0, Math.min(8, status.publicWaypointsHash().length()));
-        graphics.text(font, Component.translatable("mapsyncer.gui.admin.waypoints",
+        graphics.drawString(font, Component.translatable("mapsyncer.gui.admin.waypoints",
                 status.publicWaypointsEnabled() ? Component.translatable("mapsyncer.gui.settings.on").getString()
                         : Component.translatable("mapsyncer.gui.settings.off").getString(),
                 status.publicWaypointsGroup(), status.publicWaypointsCount(), waypointHash),
                 x, statusY + 96, 0xFFB9C3CC, false);
     }
 
-    private void drawSettingsTab(GuiGraphicsExtractor graphics) {
+    private void drawSettingsTab(GuiGraphics graphics) {
         int x = contentLeft();
         int y = settingsStartY();
         int textWidth = Math.max(118, contentRight() - x - Math.min(130, Math.max(104, contentWidth() / 3)) - 12);
@@ -462,26 +462,26 @@ public class MapSyncerScreen extends Screen {
         drawSetting(graphics, "mapsyncer.gui.settings.chat", "mapsyncer.gui.settings.chat.desc", x, y + rowGap * 3, textWidth);
         int noteY = y + rowGap * 4 + 4;
         if (noteY + 24 < panelTop() + panelHeight()) {
-            graphics.textWithWordWrap(font, Component.translatable("mapsyncer.gui.settings.server_limit_note"),
+            graphics.drawWordWrap(font, Component.translatable("mapsyncer.gui.settings.server_limit_note"),
                     x, noteY, contentWidth(), 0xFFB9C3CC);
         }
     }
 
-    private void drawSetting(GuiGraphicsExtractor graphics, String titleKey, String descKey, int x, int y, int textWidth) {
-        graphics.text(font, Component.translatable(titleKey), x, y + 2, 0xFFE8F0F6, false);
-        graphics.textWithWordWrap(font, Component.translatable(descKey), x, y + 16, textWidth, 0xFF9BA8B5);
+    private void drawSetting(GuiGraphics graphics, String titleKey, String descKey, int x, int y, int textWidth) {
+        graphics.drawString(font, Component.translatable(titleKey), x, y + 2, 0xFFE8F0F6, false);
+        graphics.drawWordWrap(font, Component.translatable(descKey), x, y + 16, textWidth, 0xFF9BA8B5);
     }
 
-    private void drawSingleLine(GuiGraphicsExtractor graphics, Component text, int x, int y, int maxWidth, int color) {
+    private void drawSingleLine(GuiGraphics graphics, Component text, int x, int y, int maxWidth, int color) {
         String value = text.getString();
         if (font.width(value) <= maxWidth) {
-            graphics.text(font, text, x, y, color, false);
+            graphics.drawString(font, text, x, y, color, false);
             return;
         }
         String ellipsis = "...";
         int limit = Math.max(1, maxWidth - font.width(ellipsis));
         String trimmed = font.plainSubstrByWidth(value, limit) + ellipsis;
-        graphics.text(font, Component.literal(trimmed), x, y, color, false);
+        graphics.drawString(font, Component.literal(trimmed), x, y, color, false);
     }
 
     private void updateDynamicButtons() {

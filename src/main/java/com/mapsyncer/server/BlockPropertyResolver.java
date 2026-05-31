@@ -304,7 +304,7 @@ public class BlockPropertyResolver {
     private static int getLightBlock(BlockState state) {
         try {
             // getLightBlock 需要 BlockGetter 和 BlockPos 参数
-            return state.getLightDampening();
+            return state.getLightBlock();
         } catch (Exception e) {
             // 备用：基于方块类型估算
             FluidState fluidState = state.getFluidState();

@@ -304,43 +304,43 @@ public class ServerSyncHandler {
      * 注册网络包处理器
      */
     public static void register() {
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.SyncRequestPayload.TYPE,
                 PacketHandler.SyncRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.RadiusSyncRequestPayload.TYPE,
                 PacketHandler.RadiusSyncRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.SyncResponsePayload.TYPE,
                 PacketHandler.SyncResponsePayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.SyncProgressPayload.TYPE,
                 PacketHandler.SyncProgressPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.SyncRegionPartPayload.TYPE,
                 PacketHandler.SyncRegionPartPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.SyncRegionCompletePayload.TYPE,
                 PacketHandler.SyncRegionCompletePayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.ServerInstalledPayload.TYPE,
                 PacketHandler.ServerInstalledPayload.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.AdminStatusRequestPayload.TYPE,
                 PacketHandler.AdminStatusRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.AdminStatusPayload.TYPE,
                 PacketHandler.AdminStatusPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.OpenGuiPayload.TYPE,
                 PacketHandler.OpenGuiPayload.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.AdminSettingsUpdatePayload.TYPE,
                 PacketHandler.AdminSettingsUpdatePayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(
+        PayloadTypeRegistry.playS2C().register(
                 PacketHandler.PublicWaypointsPayload.TYPE,
                 PacketHandler.PublicWaypointsPayload.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(
+        PayloadTypeRegistry.playC2S().register(
                 PacketHandler.PublicWaypointsRequestPayload.TYPE,
                 PacketHandler.PublicWaypointsRequestPayload.STREAM_CODEC);
 
